@@ -1,0 +1,10 @@
+h1
+  | Chat Room
+
+#messages
+  = render @messages
+
+form
+  label
+    | Say something:
+  input type="text" data-behavior="room_speaker"
