@@ -8,6 +8,10 @@ class RoomChannel < ApplicationCable::Channel
   end
 
   def speak(data)
-    Message.create! content: data['message']
+    message = Message.new(
+                    content:          data['content'],
+                    picture_data_uri: data['data_uri']
+              )
+    message.save
   end
 end

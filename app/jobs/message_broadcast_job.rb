@@ -3,12 +3,18 @@ class MessageBroadcastJob < ApplicationJob
 
   def perform(message)
     # Do something later
-    ActionCable.server.broadcast 'room_channel', message: render_message(message)
+    ActionCable.server.broadcast('room_channel', cast_data(message))
   end
 
   private
 
-    def render_message(message)
-      ApplicationController.renderer.render(partial: 'messages/message', locals: { message: message })
+    def cast_data(message)
+      { 
+        message_html:
+        ApplicationController.renderer.render(
+          partial: 'messages/message',
+          locals: { message: message }
+        )
+      }
     end
 end

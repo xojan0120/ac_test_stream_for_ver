@@ -1,10 +1,10 @@
 h1
   | Chat Room
 
+form id="test_form"
+  input type="text" id="content"
+  input type="file" id="picture"
+
 #messages
   = render @messages
 
-form
-  label
-    | Say something:
-  input type="text" data-behavior="room_speaker"
