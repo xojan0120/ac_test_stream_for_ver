@@ -3,7 +3,6 @@ class MessageBroadcastJob < ApplicationJob
 
   def perform(message)
     ActionCable.server.broadcast("room_channel_#{message.room_id}", cast_data(message))
-    puts "ぱーふぉーむ"
   end
 
   private

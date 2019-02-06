@@ -18,9 +18,4 @@ class RoomChannel < ApplicationCable::Channel
               )
     message.save
   end
-
-  def something
-    #ActionCable.server.broadcast("room_channel_#{params['room_id']}", { message_html: '<div>ほげ</div>' })
-    ActionCable.server.broadcast("hoge_channel", { message_html: '<div>ほげ</div>' })
-  end
 end
