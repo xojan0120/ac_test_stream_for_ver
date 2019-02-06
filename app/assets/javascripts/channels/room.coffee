@@ -20,9 +20,6 @@ $(document).on 'turbolinks:load', ->
     speak: (content, data_uri, file_name) ->
       @perform('speak', { content: content, data_uri: data_uri, file_name: file_name })
       clear_form('#test_form')
-      
-    something: ->
-      @perform('something')
 
 # -----------------------------------------------------------------------------------------------------------------------------
 # 関数
