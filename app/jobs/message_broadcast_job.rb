@@ -2,7 +2,7 @@ class MessageBroadcastJob < ApplicationJob
   queue_as :default
 
   def perform(message)
-    RoomChannel.broadcast_to(message.room_id, cast_data(message))
+    ActionCable.server.broadcast("room_channel_#{message.room_id}", cast_data(message))
   end
 
   private

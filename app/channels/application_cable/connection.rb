@@ -1,14 +1,5 @@
 module ApplicationCable
   class Connection < ActionCable::Connection::Base
-    identified_by :room_id
-    def connect
-      # ここのキーはシンボルではなく文字列でなければ値を取れない
-      # cookieの仕様？ http://higan96.hatenablog.com/entry/2014/05/12/131157
-      self.room_id = session['room_id']
-    end
-    def session
-      cookies.encrypted[Rails.application.config.session_options[:key]]
-    end
 =begin
     identified_by :current_user
 

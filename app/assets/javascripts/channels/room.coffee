@@ -1,19 +1,25 @@
 # -----------------------------------------------------------------------------------------------------------------------------
-# App.room
+# ロードイベント関数
 # -----------------------------------------------------------------------------------------------------------------------------
-App.room = App.cable.subscriptions.create "RoomChannel",
-  connected: ->
-    # Called when the subscription is ready for use on the server
+$(document).on 'turbolinks:load', ->
+  room_id = $('#test_form').data("room-id")
 
-  disconnected: ->
-    # Called when the subscription has been terminated by the server
-
-  received: (data) ->
-    $('#messages').prepend(data['message_html'])
-
-  speak: (content, data_uri, file_name, room_id) ->
-    @perform('speak', { content: content, data_uri: data_uri, file_name: file_name, room_id: room_id })
-    clear_form('#test_form')
+  # -----------------------------------------------------------------------------------------------------------------------------
+  # App.room
+  # -----------------------------------------------------------------------------------------------------------------------------
+  App.room = App.cable.subscriptions.create { channel: "RoomChannel", room_id: room_id },
+    connected: ->
+      # Called when the subscription is ready for use on the server
+  
+    disconnected: ->
+      # Called when the subscription has been terminated by the server
+  
+    received: (data) ->
+      $('#messages').prepend(data['message_html'])
+  
+    speak: (content, data_uri, file_name) ->
+      @perform('speak', { content: content, data_uri: data_uri, file_name: file_name })
+      clear_form('#test_form')
 
 # -----------------------------------------------------------------------------------------------------------------------------
 # 関数
