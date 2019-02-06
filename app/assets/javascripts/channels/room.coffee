@@ -11,8 +11,8 @@ App.room = App.cable.subscriptions.create "RoomChannel",
   received: (data) ->
     $('#messages').prepend(data['message_html'])
 
-  speak: (content, data_uri, file_name) ->
-    @perform('speak', { content: content, data_uri: data_uri, file_name: file_name })
+  speak: (content, data_uri, file_name, room_id) ->
+    @perform('speak', { content: content, data_uri: data_uri, file_name: file_name, room_id: room_id })
     clear_form('#test_form')
 
 # -----------------------------------------------------------------------------------------------------------------------------

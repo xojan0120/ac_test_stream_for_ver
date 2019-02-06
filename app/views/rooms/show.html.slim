@@ -1,10 +1,11 @@
 h1
-  | Chat Room
+  | Chat Room #{@room_id}
 
 form id="test_form"
   input type="text" id="content"
   input type="file" id="picture"
 
 #messages
-  = render @messages
+  - if @messages.present?
+    = render @messages
 
