@@ -80,3 +80,4 @@ group :test do
 end
 
 gem 'carrierwave-data-uri'
+gem 'rename'
