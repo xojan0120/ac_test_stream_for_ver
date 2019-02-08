@@ -1,10 +1,11 @@
 # -----------------------------------------------------------------------------------------------------------------------------
 # セレクタ定義
 # -----------------------------------------------------------------------------------------------------------------------------
-form_selector          = '[data-form]'
-content_selector       = '[data-content]'
-picture_selector       = '[data-picture]'
-send_selector          = '[data-send]'
+form_selector    = '[data-form]'
+content_selector = '[data-content]'
+picture_selector = '[data-picture]'
+send_selector    = '[data-send]'
+room_id_selector = '[data-room-id]'
 
 # -----------------------------------------------------------------------------------------------------------------------------
 # 関数定義
@@ -23,7 +24,7 @@ speak = ->
   picture = $(picture_selector).get(0).files[0]
 
   has_content = if content.length   >  0          then true else false
-  has_picture = if typeof(picture) != 'undefined' then true else false
+  has_picture = if (picture != undefined && picture != null) then true else false
 
   if has_content || has_picture
     if has_picture
@@ -35,6 +36,17 @@ speak = ->
         App.room.speak(content)
 
   return
+
+# 既に購読しているチャンネルかどうかチェックする
+check_subscribe = (channel, room_id) ->
+  result = false
+  subscriptions = App.cable.subscriptions['subscriptions']
+  subscriptions.forEach (subscription) ->
+    identifier = subscription.identifier
+    json = JSON.parse(identifier)
+    if json.channel == channel && json.room_id == room_id
+      result = true
+  return result
 
 create_subscriptions = (params) ->
   # クライアント側でApp.cable.subscriptions.createが呼ばれると
@@ -63,7 +75,12 @@ create_subscriptions = (params) ->
 # 下部のtriggerメソッド用のカスタムイベントである。
 # show.html.slimが読み込まれたらcreate_subscriptionsする。
 $(document).on 'channels_room_create_subscriptions', ->
-  create_subscriptions({ channel: "RoomChannel" })
+  room_id = $(room_id_selector).data("room-id")
+  # 既に購読済みチャンネルならcreate_subscriptionsしない。
+  # これがないと、ブラウザバックした後、戻ってきた時に同じチャンネルを
+  # ２重で購読し、メッセージを２重で受信してしまう
+  unless check_subscribe("RoomChannel",room_id)
+    create_subscriptions({ channel: "RoomChannel", room_id: room_id })
 
 $(document).on 'keypress', content_selector, (event) ->
   if event.which is 13 # = Enter

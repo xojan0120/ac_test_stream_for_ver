@@ -1,6 +1,6 @@
 class RoomChannel < ApplicationCable::Channel
   def subscribed
-    stream_from "room_channel"
+    stream_from "room_channel_#{params['room_id']}"
   end
 
   def unsubscribed
@@ -17,7 +17,7 @@ class RoomChannel < ApplicationCable::Channel
               )
     message.save
 
-    ActionCable.server.broadcast('room_channel', cast_data(message))
+    ActionCable.server.broadcast("room_channel_#{params['room_id']}", cast_data(message))
   end
 
   private
