@@ -6,7 +6,9 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
-Message.create(content: "room100のメッセージ1", room_id: 100)
-Message.create(content: "room100のメッセージ2", room_id: 100)
-Message.create(content: "room200のメッセージ1", room_id: 200)
-Message.create(content: "room200のメッセージ2", room_id: 200)
+room1 = Room.create
+room2 = Room.create
+Message.create(content: "room100のメッセージ1", room: room1)
+Message.create(content: "room100のメッセージ2", room: room1)
+Message.create(content: "room200のメッセージ1", room: room2)
+Message.create(content: "room200のメッセージ2", room: room2)
