@@ -1,5 +1,6 @@
 FactoryBot.define do
   factory :message do
-    content "MyText"
+    sequence(:content) { |i| "message#{i}" }
+    room_id 100
   end
 end
