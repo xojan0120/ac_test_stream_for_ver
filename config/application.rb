@@ -6,7 +6,7 @@ require 'rails/all'
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
-module AcTestStreamFromVer
+module AcTestStaticChannelVer
   class Application < Rails::Application
     config.generators.fixture_replacement :factory_bot, dir: 'spec/factories'
     config.generators do |g| g.test_framework :rspec, view_specs: false, helper_specs: false, routing_specs: false, controller_specs: false end

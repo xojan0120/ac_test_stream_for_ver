@@ -1,7 +1,0 @@
-h1
-  | Chat Room List
-
-ul
-  - @room_ids.each do |room_id|
-    li
-      = link_to room_id, rooms_show_path(room_id: room_id)

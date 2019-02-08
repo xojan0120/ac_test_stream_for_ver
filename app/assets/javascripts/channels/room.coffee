@@ -1,28 +1,13 @@
 # -----------------------------------------------------------------------------------------------------------------------------
-# ロードイベント関数
+# セレクタ定義
 # -----------------------------------------------------------------------------------------------------------------------------
-$(document).on 'turbolinks:load', ->
-  room_id = $('#test_form').data("room-id")
-
-  # -----------------------------------------------------------------------------------------------------------------------------
-  # App.room
-  # -----------------------------------------------------------------------------------------------------------------------------
-  App.room = App.cable.subscriptions.create { channel: "RoomChannel", room_id: room_id },
-    connected: ->
-      # Called when the subscription is ready for use on the server
-  
-    disconnected: ->
-      # Called when the subscription has been terminated by the server
-  
-    received: (data) ->
-      $('#messages').prepend(data['message_html'])
-  
-    speak: (content, data_uri, file_name) ->
-      @perform('speak', { content: content, data_uri: data_uri, file_name: file_name })
-      clear_form('#test_form')
+form_selector          = '[data-form]'
+content_selector       = '[data-content]'
+picture_selector       = '[data-picture]'
+send_selector          = '[data-send]'
 
 # -----------------------------------------------------------------------------------------------------------------------------
-# 関数
+# 関数定義
 # -----------------------------------------------------------------------------------------------------------------------------
 clear_form = (selector) ->
   $(selector).find(":text, :file").val("")
@@ -33,24 +18,60 @@ get_reader = (file) ->
   reader.readAsDataURL(file)
   return reader
 
+speak = ->
+  content = $.trim($(content_selector).val())
+  picture = $(picture_selector).get(0).files[0]
+
+  has_content = if content.length   >  0          then true else false
+  has_picture = if typeof(picture) != 'undefined' then true else false
+
+  if has_content || has_picture
+    if has_picture
+      file_name = picture.name
+      reader    = get_reader(picture)
+      reader.addEventListener "loadend", ->
+        App.room.speak(content, reader.result, file_name)
+    else
+        App.room.speak(content)
+
+  return
+
+create_subscriptions = (params) ->
+  # クライアント側でApp.cable.subscriptions.createが呼ばれると
+  # サーバのチャンネルと通信が始まる？
+  # paramsはapp/channels/room_channel.rbに渡される。
+  # params内のchannelキーの値は、呼び出すapp/channels/room_channel.rbの
+  # クラス名と同じでなければいけない。
+  App.room = App.cable.subscriptions.create (params),
+    connected: ->
+      # Called when the subscription is ready for use on the server
+  
+    disconnected: ->
+      # Called when the subscription has been terminated by the server
+  
+    received: (data) ->
+      $('#messages').prepend(data['html'])
+  
+    speak: (content, data_uri, file_name) ->
+      @perform('speak', { content: content, data_uri: data_uri, file_name: file_name })
+      clear_form(form_selector)
+
 # -----------------------------------------------------------------------------------------------------------------------------
-# イベント関数
+# イベント定義
 # -----------------------------------------------------------------------------------------------------------------------------
-$(document).on 'keypress', '#content', (event) ->
-  if event.which is 13
-    content = $.trim($("#content").val())
-    picture = $('#picture').get(0).files[0]
+# channels_room_create_subscriptionsはapp/views/show.html.slimの
+# 下部のtriggerメソッド用のカスタムイベントである。
+# show.html.slimが読み込まれたらcreate_subscriptionsする。
+$(document).on 'channels_room_create_subscriptions', ->
+  create_subscriptions({ channel: "RoomChannel" })
 
-    has_content = if content.length   >  0          then true else false
-    has_picture = if typeof(picture) != 'undefined' then true else false
-
-    if has_content || has_picture
-      if has_picture
-        file_name = picture.name
-        reader    = get_reader(picture)
-        reader.addEventListener "loadend", ->
-          App.room.speak(content, reader.result, file_name)
-      else
-          App.room.speak(content)
-
+$(document).on 'keypress', content_selector, (event) ->
+  if event.which is 13 # = Enter
+    speak()
     event.preventDefault()
+  return
+
+$(document).on 'click', send_selector, (event) ->
+  speak()
+  event.preventDefault()
+  return

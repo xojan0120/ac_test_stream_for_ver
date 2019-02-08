@@ -1,13 +1,20 @@
 h1
-  | Chat Room #{@room_id}
+  | Chat Room
 
-form id="test_form" data-room-id="#{@room_id}"
-  input type="text" id="content"
-  input type="file" id="picture"
+form id="test_form" data-form=""
+  input type="text" data-content=""
+  input type="file" data-picture=""
+  input type="submit" data-send=""
 
-button id="something_button" ボタン
+button data-otherChannel=""
+  | 他チャンネルテスト
 
 #messages
   - if @messages.present?
     = render @messages
 
+coffee:
+  # app/assets/javascripts/channels/room.coffeeで登録したカスタムイベントの
+  # channel_room_create_subscriptionsをキックしている。
+  $(document).trigger("channels_room_create_subscriptions")
+  $(document).trigger("channels_other_create_subscriptions")

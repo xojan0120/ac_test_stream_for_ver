@@ -8,6 +8,6 @@ class OtherChannel < ApplicationCable::Channel
   end
 
   def something
-    ActionCable.server.broadcast("other_channel", { key: 'ほげ' })
+    ActionCable.server.broadcast("other_channel", { html: 'これはother_channelに向けて送信したメッセージ' })
   end
 end
